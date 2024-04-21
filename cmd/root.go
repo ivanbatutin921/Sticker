@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 	This is a quick dirty thing, don't expect anything.
 
 	Filenames will be added in alphabetical order.
-	Filename format: foo.✨.webp (emojis used)
+	Filename format: foo.webp (no emojis used)
 
 	Usage: <sourcedir>`,
 	Run: func(_ *cobra.Command, args []string) {
@@ -47,13 +47,7 @@ var rootCmd = &cobra.Command{
 					log.Error().Str("filename", file.Name()).Msg("File has no extension, skipping")
 					continue
 				}
-				extLess := strings.TrimSuffix(file.Name(), extension)
-				emojiext := path.Ext(extLess)
-				if emojiext == "" {
-					log.Error().Str("filename", file.Name()).Msg("File has no emoji, skipping")
-				}
-				emoji := emojiext[1:]
-				files = append(files, fileMin{path.Join(inDir, file.Name()), emoji})
+				files = append(files, fileMin{path.Join(inDir, file.Name()), ""})
 			}
 		}
 
@@ -103,14 +97,6 @@ var rootCmd = &cobra.Command{
 				log.Error().Err(serr).Msg("error sending file")
 			}
 
-			serr = retry.OnError(backoff, func() (bool, error) {
-				_, err := bot.Send(tgbotapi.NewMessage(cid, f.emoji))
-				return true, err
-			})
-			if serr != nil {
-				log.Error().Err(serr).Msg("error sending emoji")
-			}
-
 			time.Sleep(200 * time.Millisecond) // else stuff can get out of order
 		}
 	},
@@ -127,3 +113,5 @@ func Execute() {
 		os.Exit(1)
 	}
 }
+
+

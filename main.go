@@ -1,7 +1,8 @@
 package main
 
-import "github.com/jtagcat/telegram-batchStickerUpload/cmd"
-
+import (
+	"root/telegram-batchStickerUpload/cmd"
+)
 func main() {
 	cmd.Execute()
 }
